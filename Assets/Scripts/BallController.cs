@@ -38,8 +38,8 @@ public class BallController : MonoBehaviour
         {
             myRigidBody.gravityScale = 0.0f;
             myRigidBody.sharedMaterial = Resources.Load("PhysicsMaterials/Bouncy") as PhysicsMaterial2D;
-            StartCoroutine(DelayStart());
         }
+        StartCoroutine(DelayStart());
     }
 
     private void Update()
@@ -52,9 +52,10 @@ public class BallController : MonoBehaviour
 
     public void ResetBall()
     {
-        StartCoroutine(DelayStart());
+        gameObject.SetActive(true);
         myRigidBody.velocity = Vector2.zero;
         transform.position = curPos;
+        StartCoroutine(DelayStart());
     }
 
     public IEnumerator DelayStart()

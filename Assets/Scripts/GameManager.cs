@@ -52,13 +52,6 @@ public class GameManager : MonoBehaviour
         {
             ResetGM();
         }
-
-        /*
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            SceneManager.LoadScene("MainMenu");
-        }
-        */
     }
 
 

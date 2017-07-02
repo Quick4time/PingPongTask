@@ -18,14 +18,14 @@ public class PaddleController : MonoBehaviour {
     private bool isAI;
 
     private GameObject BallGO;
-    private BallController_Net ballController;
+    private BallController ballController;
 
     private Vector2 curPos;
 
     private void Start()
     {
         BallGO = GameObject.FindGameObjectWithTag("Ball");
-        ballController = (BallController_Net)BallGO.GetComponent(typeof(BallController_Net));
+        ballController = (BallController)BallGO.GetComponent(typeof(BallController));
         curPos = transform.position;
     }
 

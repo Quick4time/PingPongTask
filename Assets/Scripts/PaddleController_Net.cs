@@ -17,6 +17,10 @@ public class PaddleController_Net : NetworkBehaviour
     private void Start()
     {
         curPos = transform.position;
+        if(!isLocalPlayer)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = paddleColor;
+        }
     }
 
      void Update()

@@ -9,22 +9,23 @@ using UnityEngine.Networking;
 public class BallController_Net : NetworkBehaviour
 {
     [SerializeField]
-    private float startForce;
-    private Rigidbody2D myRigidBody;
+    private float startForce; //
+    private Rigidbody2D myRigidBody; //
     private GameObject GameMasterGO;
     private GameManager_Net GM;
-    [SerializeField]
-    private GameObject spawnPoint1;
-    [SerializeField]
-    private GameObject spawnPoint2;
-    private Vector2 curPos;
-
-    float timerLeft = 3.0f;
+    private Vector2 curPos; // 
     [SyncVar]
-    public bool restarting = false;
+    float timerLeft = 3.0f; //
 
     [SerializeField]
-    private Text GoText;
+    [SyncVar]
+    public bool restarting = false; //
+
+    [SerializeField]
+    public Text GoText; //
+
+    [SyncVar]
+    private string CountText;//
 
     private void Awake()
     {
@@ -40,32 +41,39 @@ public class BallController_Net : NetworkBehaviour
         {
             myRigidBody.gravityScale = 0.0f;
             myRigidBody.sharedMaterial = Resources.Load("PhysicsMaterials/Bouncy") as PhysicsMaterial2D;
-            PullBall();
         }
+
+        CountText = "{0}";
+        restarting = true;
     }
     public void Update()
     {
+        Debug.Log(timerLeft.ToString());
         if (restarting)
         {
-            RpcCountDown();
+            RpcRestart();
         }
     }
 
     [ClientRpc]
-    void RpcCountDown()
+    void RpcRestart()
     {
         timerLeft -= Time.deltaTime;
         GoText.gameObject.SetActive(true);
-        GoText.text = "" + Mathf.RoundToInt(timerLeft);
-        if (timerLeft < 0)
+        GoText.text = string.Format(CountText, Mathf.RoundToInt(timerLeft));
+        if (timerLeft <= 0)
         {
-            ResetBall();
-            PullBall();
             GM.RpcResetGM();
             restarting = false;
-            GoText.gameObject.SetActive(false);
-            GM.winText.gameObject.SetActive(false);
+            RpcHideText();
+            timerLeft = 3.0f;
         }
+    }
+    [ClientRpc]
+    public void RpcHideText()
+    {
+        GoText.text = string.Empty;
+        GM.winText.text = string.Empty;
     }
 
     public void ResetBall()
@@ -93,16 +101,14 @@ public class BallController_Net : NetworkBehaviour
         {
             if (transform.position.x < 0)
             {
-                transform.position = (Vector2)spawnPoint1.transform.position + new Vector2(1.0f, 0.0f);
                 GM.RpcUpdateScore(2);
-                myRigidBody.velocity = new Vector2(startForce, Random.Range(-startForce, startForce) * 1.3f);
-            }
+            }  
             else
             {
-                transform.position = (Vector2)spawnPoint2.transform.position + new Vector2(-1.0f, 0.0f);
                 GM.RpcUpdateScore(1);
-                myRigidBody.velocity = new Vector2(-startForce, Random.Range(-startForce, startForce) * 1.3f);
-            }
+            }    
+            ResetBall();
+            PullBall();
         }
     }
 }
