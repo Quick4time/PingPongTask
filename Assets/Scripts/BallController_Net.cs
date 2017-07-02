@@ -6,27 +6,25 @@ using UnityEngine.Networking;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
-public class BallController_Net : NetworkBehaviour 
+public class BallController_Net : NetworkBehaviour
 {
     [SerializeField]
     private float startForce;
     private Rigidbody2D myRigidBody;
-
     private GameObject GameMasterGO;
     private GameManager_Net GM;
-
     [SerializeField]
     private GameObject spawnPoint1;
     [SerializeField]
     private GameObject spawnPoint2;
-
     private Vector2 curPos;
+
+    float timerLeft = 3.0f;
+    [SyncVar]
+    public bool restarting = false;
 
     [SerializeField]
     private Text GoText;
-
-    [SerializeField]
-    private bool resetting;
 
     private void Awake()
     {
@@ -37,37 +35,47 @@ public class BallController_Net : NetworkBehaviour
 
     private void Start()
     {
-        curPos = transform.position; 
+        curPos = transform.position;
         if (myRigidBody != null)
         {
             myRigidBody.gravityScale = 0.0f;
             myRigidBody.sharedMaterial = Resources.Load("PhysicsMaterials/Bouncy") as PhysicsMaterial2D;
-            RpcResetBall();
+            PullBall();
+        }
+    }
+    public void Update()
+    {
+        if (restarting)
+        {
+            RpcCountDown();
         }
     }
 
     [ClientRpc]
-    public void RpcResetBall()
+    void RpcCountDown()
+    {
+        timerLeft -= Time.deltaTime;
+        GoText.gameObject.SetActive(true);
+        GoText.text = "" + Mathf.RoundToInt(timerLeft);
+        if (timerLeft < 0)
+        {
+            ResetBall();
+            PullBall();
+            GM.RpcResetGM();
+            restarting = false;
+            GoText.gameObject.SetActive(false);
+            GM.winText.gameObject.SetActive(false);
+        }
+    }
+
+    public void ResetBall()
     {
         myRigidBody.velocity = Vector2.zero;
         transform.position = curPos;
-        StartCoroutine(DelayStart());
     }
 
-   
-    private void Update()
+    public void PullBall()
     {
-        if (resetting)
-        {
-            myRigidBody.velocity = Vector2.zero;
-            transform.position = curPos;
-            return;
-        }
-    }
-    
-    public IEnumerator DelayStart()
-    {
-        resetting = true;
         var random = new[]
         {
             ProportionValue.Create(0.25f, new Vector2(startForce, startForce)),
@@ -75,22 +83,7 @@ public class BallController_Net : NetworkBehaviour
             ProportionValue.Create(0.25f, new Vector2(-startForce, -startForce)),
             ProportionValue.Create(0.25f, new Vector2(-startForce, startForce)),
         };
-        GoText.gameObject.SetActive(true);
-        GoText.text = "Ready";
-        GoText.GetComponent<Shadow>().effectColor = Color.red;
-        GoText.GetComponent<Shadow>().effectDistance = new Vector2(-6, 0);
-        yield return new WaitForSeconds(1);
-        GoText.text = "Steady";
-        GoText.GetComponent<Shadow>().effectColor = Color.blue;
-        GoText.GetComponent<Shadow>().effectDistance = new Vector2(6, 0);
-        yield return new WaitForSeconds(1);
-        GoText.text = "Go";
-        GoText.GetComponent<Shadow>().effectColor = Color.green;
-        GoText.GetComponent<Shadow>().effectDistance = new Vector2(0, 6);
-        yield return new WaitForSeconds(1);
-        GoText.gameObject.SetActive(false);
-        resetting = false;
-        GM.RpcResetGM();
+
         myRigidBody.velocity = random.ChoseByRandom();
     }
 

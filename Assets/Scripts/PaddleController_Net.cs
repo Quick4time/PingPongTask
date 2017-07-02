@@ -10,20 +10,12 @@ public class PaddleController_Net : NetworkBehaviour
     private float limitMovementPaddle = 3.25f;
     private Vector2 curPos;
 
-    private GameObject ball_Go;
-    private BallController_Net ball;
+    [SyncVar]
+    private Color paddleColor = Color.blue;
 
-    private GameObject gm_Go;
-    private GameManager_Net GM;
 
     private void Start()
     {
-        gm_Go = GameObject.FindGameObjectWithTag("GM");
-        GM = (GameManager_Net)gm_Go.GetComponent(typeof(GameManager_Net));
-
-        ball_Go = GameObject.FindGameObjectWithTag("Ball");
-        ball = (BallController_Net)ball_Go.GetComponent(typeof(BallController_Net));
-
         curPos = transform.position;
     }
 
@@ -49,22 +41,15 @@ public class PaddleController_Net : NetworkBehaviour
         }
         pos.y = Mathf.Clamp(pos.y, -limitMovementPaddle, limitMovementPaddle);
         transform.position = pos;
-    }
+     }
 
-    private void OnConnectedToServer()
-    {
-        RpcReset();
-        GM.RpcResetGM();
-        ball.RpcResetBall();
-    }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         collision.rigidbody.velocity = new Vector2(collision.rigidbody.velocity.x * multipilerSpeedColBall, collision.rigidbody.velocity.y + (direction * adjustSpeed));
     }
 
-    [ClientRpc]
-    public void RpcReset()
+    public void ResetPaddle()
     {
         transform.position = curPos;
     }

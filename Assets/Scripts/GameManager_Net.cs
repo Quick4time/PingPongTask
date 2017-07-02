@@ -10,29 +10,31 @@ public class GameManager_Net : NetworkBehaviour {
     [SerializeField]
     public Text scoreText;
     [SerializeField]
-    private Text winText;
+    public Text winText;
     [SerializeField]
+
     [SyncVar]
     private int scoreTarget;
     [SerializeField]
     private Shadow shadowTextScore;
     [SerializeField]
     private Shadow shadowTextWins;
+
     [SyncVar]
     private int scorePaddel1;
     [SyncVar]
     private int scorePaddel2;
 
-  
     private GameObject ball;
+    private BallController_Net ballController;
 
     private void Awake()
     {
         shadowTextScore.effectColor = Color.white;
         shadowTextScore.effectDistance = new Vector2(0, 0);
         ball = GameObject.FindGameObjectWithTag("Ball");
+        ballController = (BallController_Net)ball.GetComponent(typeof(BallController_Net));
     }
-
 
     private void Update()
     {
@@ -42,7 +44,7 @@ public class GameManager_Net : NetworkBehaviour {
             winText.text = "Player 1 Wins";
             shadowTextWins.effectColor = Color.red;
             shadowTextWins.effectDistance = new Vector2(-5, 0);
-            ball.SetActive(false);
+            ballController.restarting = true;
         }
         if (scorePaddel2 >= scoreTarget)
         {
@@ -50,7 +52,13 @@ public class GameManager_Net : NetworkBehaviour {
             winText.text = "Player 2 Wins";
             shadowTextWins.effectColor = Color.blue;
             shadowTextWins.effectDistance = new Vector2(5, 0);
-            ball.SetActive(false);
+            ballController.restarting = true;
+
+        }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            RpcResetGM();
         }
     }
 
