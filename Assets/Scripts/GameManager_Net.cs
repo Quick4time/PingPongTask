@@ -1,34 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class GameManager_Net : NetworkBehaviour
 {
 
-    [SerializeField]
-    public Text scoreText;
-    [SerializeField]
-    public Text winText;
-    [SerializeField]
+    [SerializeField] public Text GoText;
+    [SerializeField] public Text scoreText;
+    [SerializeField] public Text winText;
 
-    [SyncVar]
-    private int scoreTarget;
-    [SerializeField]
-    private Shadow shadowTextScore;
-    [SerializeField]
-    private Shadow shadowTextWins;
+    [SerializeField][SyncVar] private int scoreTarget;
 
-    [SyncVar]
-    private int scorePaddel1;
-    [SyncVar]
-    private int scorePaddel2;
-    private string WinPlayer;
+    [SerializeField] private Shadow shadowTextScore;
+    [SerializeField] private Shadow shadowTextWins;
+
+    [SyncVar] private int scorePaddel1;
+    [SyncVar] private int scorePaddel2;
+    [SyncVar] private string WinPlayer;
+    [SyncVar] private string CountText = "{0}";
+    float timerLeft = 3.0f; 
+
+    [SerializeField] public bool restarting = false;
 
     private GameObject ball;
     private BallController_Net ballController;
-
 
     private void Awake()
     {
@@ -39,8 +34,18 @@ public class GameManager_Net : NetworkBehaviour
         ballController = (BallController_Net)ball.GetComponent(typeof(BallController_Net));
     }
 
+    private void Start()
+    {
+        restarting = true;
+    }
+
     private void Update()
     {
+        if (restarting)
+        {
+            RpcRestart();
+        }
+
         if (scorePaddel1 >= scoreTarget)
         {
             winText.gameObject.SetActive(true);
@@ -49,7 +54,7 @@ public class GameManager_Net : NetworkBehaviour
             ballController.ResetBall();
             if(Input.GetKeyDown(KeyCode.Space))
             {
-                ballController.restarting = true;
+                restarting = true;
             }
         }
         if (scorePaddel2 >= scoreTarget)
@@ -60,9 +65,31 @@ public class GameManager_Net : NetworkBehaviour
             ballController.ResetBall();
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                ballController.restarting = true;
+                restarting = true;
             }
         }
+    }
+
+    [ClientRpc]
+    void RpcRestart()
+    {
+        timerLeft -= Time.deltaTime;
+        GoText.gameObject.SetActive(true);
+        GoText.text = string.Format(CountText, Mathf.RoundToInt(timerLeft));
+        if (timerLeft <= 0)
+        {
+            RpcResetGM();
+            restarting = false;
+            RpcHideText();
+            timerLeft = 3.0f;
+        }
+    }
+
+    [ClientRpc]
+    public void RpcHideText()
+    {
+        GoText.text = string.Empty;
+        winText.text = string.Empty;
     }
 
     [ClientRpc]

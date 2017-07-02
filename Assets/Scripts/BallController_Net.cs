@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -9,23 +6,13 @@ using UnityEngine.Networking;
 public class BallController_Net : NetworkBehaviour
 {
     [SerializeField]
-    private float startForce; //
-    private Rigidbody2D myRigidBody; //
+    private float startForce;
+    private Rigidbody2D myRigidBody;
     private GameObject GameMasterGO;
     private GameManager_Net GM;
-    private Vector2 curPos; // 
-    [SyncVar]
-    float timerLeft = 3.0f; //
+    private Vector2 curPos;
 
-    [SerializeField]
-    [SyncVar]
-    public bool restarting = false; //
-
-    [SerializeField]
-    public Text GoText; //
-
-    [SyncVar]
-    private string CountText;//
+    AudioManager audioManager;
 
     private void Awake()
     {
@@ -43,37 +30,11 @@ public class BallController_Net : NetworkBehaviour
             myRigidBody.sharedMaterial = Resources.Load("PhysicsMaterials/Bouncy") as PhysicsMaterial2D;
         }
 
-        CountText = "{0}";
-        restarting = true;
-    }
-    public void Update()
-    {
-        Debug.Log(timerLeft.ToString());
-        if (restarting)
+        audioManager = AudioManager.instance;
+        if (audioManager == null)
         {
-            RpcRestart();
+            Debug.LogError("No audioManager found!");
         }
-    }
-
-    [ClientRpc]
-    void RpcRestart()
-    {
-        timerLeft -= Time.deltaTime;
-        GoText.gameObject.SetActive(true);
-        GoText.text = string.Format(CountText, Mathf.RoundToInt(timerLeft));
-        if (timerLeft <= 0)
-        {
-            GM.RpcResetGM();
-            restarting = false;
-            RpcHideText();
-            timerLeft = 3.0f;
-        }
-    }
-    [ClientRpc]
-    public void RpcHideText()
-    {
-        GoText.text = string.Empty;
-        GM.winText.text = string.Empty;
     }
 
     public void ResetBall()
@@ -99,6 +60,7 @@ public class BallController_Net : NetworkBehaviour
     {
         if (collision.CompareTag("ScoreZone"))
         {
+            audioManager.PlaySound("Goal");
             if (transform.position.x < 0)
             {
                 GM.RpcUpdateScore(2);

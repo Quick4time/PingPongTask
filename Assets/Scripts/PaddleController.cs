@@ -18,7 +18,7 @@ public class PaddleController : MonoBehaviour {
     private bool isAI;
 
     private GameObject BallGO;
-    private BallController ballController;
+    BallController ballController;
 
     private Vector2 curPos;
 
@@ -26,12 +26,6 @@ public class PaddleController : MonoBehaviour {
     {
         BallGO = GameObject.FindGameObjectWithTag("Ball");
         ballController = (BallController)BallGO.GetComponent(typeof(BallController));
-        curPos = transform.position;
-    }
-
-    public void Reset()
-    {
-        transform.position = curPos;
     }
 
     void Update ()
@@ -78,7 +72,6 @@ public class PaddleController : MonoBehaviour {
             }
         }
 	   
-
         if (transform.position.y > limitMovementPaddle)
         {
             transform.position = new Vector2(transform.position.x, limitMovementPaddle);
@@ -87,17 +80,10 @@ public class PaddleController : MonoBehaviour {
         {
             transform.position = new Vector2(transform.position.x, -limitMovementPaddle);
         }
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            Reset();
-        }
     }
-
-    
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         collision.rigidbody.velocity = new Vector2(collision.rigidbody.velocity.x * multipilerSpeedColBall, collision.rigidbody.velocity.y + (direction * adjustSpeed));
-        Debug.Log(collision.rigidbody.velocity.ToString());
     }
 }

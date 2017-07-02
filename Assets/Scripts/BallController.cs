@@ -42,14 +42,6 @@ public class BallController : MonoBehaviour
         StartCoroutine(DelayStart());
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ResetBall();
-        }
-    }
-
     public void ResetBall()
     {
         gameObject.SetActive(true);
@@ -93,7 +85,6 @@ public class BallController : MonoBehaviour
                 transform.position = (Vector2)Paddel1.transform.position + new Vector2(1.0f, 0.0f);
                 GM.UpdateScore(2);
                 myRigidBody.velocity = new Vector2(startForce, startForce);
- 
             }
             else
             {

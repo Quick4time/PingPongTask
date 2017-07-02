@@ -13,6 +13,7 @@ public class PaddleController_Net : NetworkBehaviour
     [SyncVar]
     private Color paddleColor = Color.blue;
 
+    AudioManager audioManager;
 
     private void Start()
     {
@@ -20,6 +21,11 @@ public class PaddleController_Net : NetworkBehaviour
         if(!isLocalPlayer)
         {
             gameObject.GetComponent<SpriteRenderer>().color = paddleColor;
+        }
+        audioManager = AudioManager.instance;
+        if (audioManager == null)
+        {
+            Debug.LogError("No audioManager found!");
         }
     }
 
@@ -51,6 +57,7 @@ public class PaddleController_Net : NetworkBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         collision.rigidbody.velocity = new Vector2(collision.rigidbody.velocity.x * multipilerSpeedColBall, collision.rigidbody.velocity.y + (direction * adjustSpeed));
+        audioManager.PlaySound("Hit");
     }
 
     public void ResetPaddle()

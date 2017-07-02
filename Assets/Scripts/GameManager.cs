@@ -21,12 +21,14 @@ public class GameManager : MonoBehaviour
     private int scorePaddel2;
 
     private GameObject ball;
+    private BallController ballController;
 
     private void Awake()
     {
         shadowTextScore.effectColor = Color.white;
         shadowTextScore.effectDistance = new Vector2(0, 0);
         ball = GameObject.FindGameObjectWithTag("Ball");
+        ballController = (BallController)ball.GetComponent(typeof(BallController));
     }
 
     private void Update()
@@ -37,7 +39,11 @@ public class GameManager : MonoBehaviour
             winText.text = "Player 1 Wins";
             shadowTextWins.effectColor = Color.red;
             shadowTextWins.effectDistance = new Vector2(-5, 0);
-            ball.SetActive(false);
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                ResetGM();
+                ballController.ResetBall();
+            }
         }
         if (scorePaddel2 >= scoreTarget)
         {
@@ -45,15 +51,13 @@ public class GameManager : MonoBehaviour
             winText.text = "Player 2 Wins";
             shadowTextWins.effectColor = Color.blue;
             shadowTextWins.effectDistance = new Vector2(5, 0);
-            ball.SetActive(false);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ResetGM();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                ResetGM();
+                ballController.ResetBall();
+            }
         }
     }
-
 
     public void ResetGM()
     {
@@ -61,6 +65,7 @@ public class GameManager : MonoBehaviour
         scoreText.text = string.Format("{0} - {1}", scorePaddel1, scorePaddel2);
         shadowTextScore.effectColor = Color.white;
         shadowTextScore.effectDistance = new Vector2(0, 0);
+        winText.gameObject.SetActive(false);
     }
 
     public void UpdateScore(int player)
