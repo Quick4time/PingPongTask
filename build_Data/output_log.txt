@@ -1,0 +1,34 @@
+Initialize engine version: 5.6.0f3 (497a0f351392)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon (TM) R7 360 Series (ID=0x665f)
+    Vendor:   ATI
+    VRAM:     2022 MB
+    Driver:   21.19.151.3
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+- Completed reload, in  0.109 seconds
+Platform assembly: C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\lapan_000\Desktop\PingPongTask\build_Data\Managed\System.dll (this message is harmless)
+desktop: 1920x1080 60Hz; virtual: 3840x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 1.283513 ms
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 6.238393 ms
+
+Unloading 24 unused Assets to reduce memory usage. Loaded Objects now: 359.
+Total: 0.257671 ms (FindLiveObjects: 0.024722 ms CreateObjectMapping: 0.020134 ms MarkObjects: 0.188347 ms  DeleteObjects: 0.023447 ms)
+
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 1c30 -> priority: 1 
+  Thread -> id: 1a14 -> priority: 1 
